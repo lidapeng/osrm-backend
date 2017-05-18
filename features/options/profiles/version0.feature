@@ -27,7 +27,7 @@ end
     Scenario: Out-bound API version
         Given the profile file
           """
-api_version = 2
+api_version = 3
           """
         And the node map
           """
@@ -49,14 +49,15 @@ api_version = 2
 api_version = 0
 
 -- set profile properties
-properties.u_turn_penalty                  = 20
-properties.traffic_signal_penalty          = 2
-properties.max_speed_for_map_matching      = 180/3.6
-properties.use_turn_restrictions           = true
-properties.continue_straight_at_waypoint   = true
-properties.left_hand_driving               = false
-properties.weight_name                     = 'duration'
-
+profile = {
+  u_turn_penalty                  = 20,
+  traffic_signal_penalty          = 2,
+  max_speed_for_map_matching      = 180/3.6,
+  use_turn_restrictions           = true,
+  continue_straight_at_waypoint   = true,
+  left_hand_driving               = false,
+  weight_name                     = 'duration'
+}
 function node_function (node, result)
   print ('node_function ' .. node:id())
 end

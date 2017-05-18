@@ -62,10 +62,12 @@ Feature: Weight tests
     Scenario: Step weights -- way_function: fail if no weight or weight_per_meter property
         Given the profile file "testbot" extended with
         """
-        api_version = 1
-        properties.traffic_signal_penalty = 0
-        properties.u_turn_penalty = 0
-        properties.weight_name = 'steps'
+        function specialize()
+          profile.traffic_signal_penalty = 0
+          profile.u_turn_penalty = 0
+          profile.weight_name = 'steps'
+        end
+
         function way_function(way, result)
           result.forward_mode = mode.driving
           result.backward_mode = mode.driving
@@ -89,10 +91,12 @@ Feature: Weight tests
     Scenario: Step weights -- way_function: second way wins
         Given the profile file "testbot" extended with
         """
-        api_version = 1
-        properties.traffic_signal_penalty = 0
-        properties.u_turn_penalty = 0
-        properties.weight_name = 'steps'
+        function specialize()
+          profile.traffic_signal_penalty = 0
+          profile.u_turn_penalty = 0
+          profile.weight_name = 'steps'
+        end
+
         function way_function(way, result)
           result.forward_mode = mode.driving
           result.backward_mode = mode.driving
@@ -121,10 +125,11 @@ Feature: Weight tests
     Scenario: Step weights -- way_function: higher weight_per_meter is preferred
         Given the profile file "testbot" extended with
         """
-        api_version = 1
-        properties.traffic_signal_penalty = 0
-        properties.u_turn_penalty = 0
-        properties.weight_name = 'steps'
+        function specialize()
+          profile.traffic_signal_penalty = 0
+          profile.u_turn_penalty = 0
+          profile.weight_name = 'steps'
+        end
         function way_function(way, result)
           result.forward_mode = mode.driving
           result.backward_mode = mode.driving
@@ -157,10 +162,12 @@ Feature: Weight tests
     Scenario: Step weights -- segment_function
         Given the profile file "testbot" extended with
         """
-        api_version = 1
-        properties.traffic_signal_penalty = 0
-        properties.u_turn_penalty = 0
-        properties.weight_name = 'steps'
+        function specialize()
+          profile.traffic_signal_penalty = 0
+          profile.u_turn_penalty = 0
+          profile.weight_name = 'steps'
+        end
+
         function way_function(way, result)
           result.forward_mode = mode.driving
           result.backward_mode = mode.driving
@@ -197,11 +204,13 @@ Feature: Weight tests
     Scenario: Step weights -- segment_function and turn_function with weight precision
         Given the profile file "testbot" extended with
         """
-        api_version = 1
-        properties.traffic_signal_penalty = 0
-        properties.u_turn_penalty = 0
-        properties.weight_name = 'steps'
-        properties.weight_precision = 3
+        function specialize()
+          profile.traffic_signal_penalty = 0
+          profile.u_turn_penalty = 0
+          profile.weight_name = 'steps'
+          profile.weight_precision = 3
+        end
+
         function way_function(way, result)
           result.forward_mode = mode.driving
           result.backward_mode = mode.driving
@@ -243,10 +252,12 @@ Feature: Weight tests
     Scenario: Step weights -- segment_function with speed and turn updates
         Given the profile file "testbot" extended with
         """
-        api_version = 1
-        properties.traffic_signal_penalty = 0
-        properties.u_turn_penalty = 0
-        properties.weight_name = 'steps'
+        function specialize()
+          profile.traffic_signal_penalty = 0
+          profile.u_turn_penalty = 0
+          profile.weight_name = 'steps'
+        end
+
         function way_function(way, result)
           result.forward_mode = mode.driving
           result.backward_mode = mode.driving
@@ -291,8 +302,9 @@ Feature: Weight tests
     Scenario: Step weights -- segment_function with speed and turn updates with fallback to durations
         Given the profile file "testbot" extended with
         """
-        api_version = 1
-        properties.weight_precision = 3
+        function specialize()
+          profile.weight_precision = 3
+        end
         """
 
         And the node map

@@ -35,7 +35,10 @@ Feature: osrm-contract command line option: edge-weight-updates-over-factor
     Scenario: Logging using weigts as durations for non-duration profile
         Given the profile file "testbot" extended with
         """
-        properties.weight_name = 'steps'
+        function specialize()
+            profile.weight_name = 'steps'
+        end
+
         function way_function(way, result)
           result.forward_mode = mode.driving
           result.backward_mode = mode.driving

@@ -1,7 +1,13 @@
-api_version = 1
+api_version = 2
 -- Rasterbot profile
 
-properties.force_split_edges = true
+profile = {}
+
+function initialize()
+  profile = {
+    force_split_edges = true
+  }
+end
 
 -- Set to true if you need to call the node_function for every node.
 -- Generally can be left as false to avoid unnecessary Lua calls

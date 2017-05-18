@@ -2,17 +2,20 @@
 Feature: Testbot - side bias
 
     Background:
-        Given the profile file
+        Given the profile file "testbot" extended with
         """
-        require 'testbot'
-        properties.left_hand_driving = true
+        function specialize()
+          profile.left_hand_driving = true
+        end
         """
 
     Scenario: Left hand bias
         Given the profile file "car" extended with
         """
-        properties.left_hand_driving = true
-        profile.turn_bias = properties.left_hand_driving and 1/1.075 or 1.075
+        function specialize()
+          profile.left_hand_driving = true
+          profile.turn_bias = profile.left_hand_driving and 1/1.075 or 1.075
+        end
         """
         Given the node map
             """
@@ -34,8 +37,11 @@ Feature: Testbot - side bias
     Scenario: Right hand bias
         Given the profile file "car" extended with
         """
-        properties.left_hand_driving = false
-        profile.turn_bias = properties.left_hand_driving and 1/1.075 or 1.075
+        function specialize()
+          use_left_hand_driving = false
+          profile.left_hand_driving = use_left_hand_driving
+          profile.turn_bias = use_left_hand_driving and 1/1.075 or 1.075
+        end
         """
         And the node map
             """

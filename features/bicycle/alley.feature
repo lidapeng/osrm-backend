@@ -2,10 +2,11 @@
 Feature: Bicycle - Route around alleys
 
     Background:
-        Given the profile file
+        Given the profile file "bicycle" extended with
         """
-        require 'bicycle'
-        properties.weight_name = 'cyclability'
+        function specialize()
+          profile.weight_name = 'cyclability'
+        end
         """
 
     Scenario: Bicycle - Avoid taking alleys

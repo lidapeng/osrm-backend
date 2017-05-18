@@ -1,4 +1,4 @@
-api_version = 1
+api_version = 2
 
 -- Bicycle profile
 local find_access_tag = require("lib/access").find_access_tag
@@ -8,192 +8,190 @@ local Handlers = require("lib/handlers")
 local next = next       -- bind to local for speed
 local limit = require("lib/maxspeed").limit
 
--- these need to be global because they are accesed externaly
-properties.max_speed_for_map_matching    = 110/3.6 -- kmph -> m/s
-properties.use_turn_restrictions         = false
-properties.continue_straight_at_waypoint = false
-properties.weight_name                   = 'duration'
---properties.weight_name                   = 'cyclability'
-
--- Set to true if you need to call the node_function for every node.
--- Generally can be left as false to avoid unnecessary Lua calls
--- (which slow down pre-processing).
-properties.call_tagless_node_function      = false
-
-
 local default_speed = 15
 local walking_speed = 6
 
-local profile = {
-  default_mode              = mode.cycling,
-  default_speed             = 15,
-  oneway_handling           = true,
-  traffic_light_penalty     = 2,
-  u_turn_penalty            = 20,
-  turn_penalty              = 6,
-  turn_bias                 = 1.4,
+profile = {}
 
-  -- reduce the driving speed by 30% for unsafe roads
-  -- local safety_penalty            = 0.7,
-  safety_penalty            = 1.0,
-  use_public_transport      = true,
+function initialize()
+  -- must be global because it's accesed externally
+  profile = {
+    max_speed_for_map_matching    = 110/3.6, -- kmph -> m/s
+    use_turn_restrictions         = false,
+    continue_straight_at_waypoint = false,
+  --weight_name                   = 'cyclability',
+    weight_name                   = 'duration',
+    call_tagless_node_function    = false,
 
-  allowed_start_modes = Set {
-    mode.cycling,
-    mode.pushing_bike
-  },
+    default_mode              = mode.cycling,
+    default_speed             = 15,
+    oneway_handling           = true,
+    traffic_light_penalty     = 2,
+    u_turn_penalty            = 20,
+    turn_penalty              = 6,
+    turn_bias                 = 1.4,
 
-  barrier_whitelist = Set {
-    'sump_buster',
-    'bus_trap',
-    'cycle_barrier',
-    'bollard',
-    'entrance',
-    'cattle_grid',
-    'border_control',
-    'toll_booth',
-    'sally_port',
-    'gate',
-    'no',
-    'block'
-  },
+    -- reduce the driving speed by 30% for unsafe roads
+    -- local safety_penalty            = 0.7,
+    safety_penalty            = 1.0,
+    use_public_transport      = true,
 
-  access_tag_whitelist = Set {
-  	'yes',
-  	'permissive',
-   	'designated'
-  },
+    allowed_start_modes = Set {
+      mode.cycling,
+      mode.pushing_bike
+    },
 
-  access_tag_blacklist = Set {
-  	'no',
-   	'private',
-   	'agricultural',
-   	'forestry',
-   	'delivery'
-  },
+    barrier_whitelist = Set {
+      'sump_buster',
+      'bus_trap',
+      'cycle_barrier',
+      'bollard',
+      'entrance',
+      'cattle_grid',
+      'border_control',
+      'toll_booth',
+      'sally_port',
+      'gate',
+      'no',
+      'block'
+    },
 
-  restricted_access_tag_list = Set { },
+    access_tag_whitelist = Set {
+    	'yes',
+    	'permissive',
+     	'designated'
+    },
 
-  restricted_highway_whitelist = Set { },
+    access_tag_blacklist = Set {
+    	'no',
+     	'private',
+     	'agricultural',
+     	'forestry',
+     	'delivery'
+    },
 
-  access_tags_hierarchy = Sequence {
-  	'bicycle',
-  	'vehicle',
-  	'access'
-  },
+    restricted_access_tag_list = Set { },
 
-  restrictions = Set {
-  	'bicycle'
-  },
+    restricted_highway_whitelist = Set { },
 
-  cycleway_tags = Set {
-  	'track',
-  	'lane',
-  	'opposite',
-  	'opposite_lane',
-  	'opposite_track',
-  	'share_busway',
-  	'sharrow',
-  	'shared'
-  },
+    access_tags_hierarchy = Sequence {
+    	'bicycle',
+    	'vehicle',
+    	'access'
+    },
 
-  unsafe_highway_list = Set {
-  	'primary',
-   	'secondary',
-   	'tertiary',
-   	'primary_link',
-   	'secondary_link',
-   	'tertiary_link'
-  },
+    restrictions = Set {
+    	'bicycle'
+    },
 
-  service_penalties = {
-    alley             = 0.5,
-  },
+    cycleway_tags = Set {
+    	'track',
+    	'lane',
+    	'opposite',
+    	'opposite_lane',
+    	'opposite_track',
+    	'share_busway',
+    	'sharrow',
+    	'shared'
+    },
 
-  bicycle_speeds = {
-    cycleway = default_speed,
-    primary = default_speed,
-    primary_link = default_speed,
-    secondary = default_speed,
-    secondary_link = default_speed,
-    tertiary = default_speed,
-    tertiary_link = default_speed,
-    residential = default_speed,
-    unclassified = default_speed,
-    living_street = default_speed,
-    road = default_speed,
-    service = default_speed,
-    track = 12,
-    path = 12
-  },
+    unsafe_highway_list = Set {
+    	'primary',
+     	'secondary',
+     	'tertiary',
+     	'primary_link',
+     	'secondary_link',
+     	'tertiary_link'
+    },
 
-  pedestrian_speeds = {
-    footway = walking_speed,
-    pedestrian = walking_speed,
-    steps = 2
-  },
+    service_penalties = {
+      alley             = 0.5,
+    },
 
-  railway_speeds = {
-    train = 10,
-    railway = 10,
-    subway = 10,
-    light_rail = 10,
-    monorail = 10,
-    tram = 10
-  },
+    bicycle_speeds = {
+      cycleway = default_speed,
+      primary = default_speed,
+      primary_link = default_speed,
+      secondary = default_speed,
+      secondary_link = default_speed,
+      tertiary = default_speed,
+      tertiary_link = default_speed,
+      residential = default_speed,
+      unclassified = default_speed,
+      living_street = default_speed,
+      road = default_speed,
+      service = default_speed,
+      track = 12,
+      path = 12
+    },
 
-  platform_speeds = {
-    platform = walking_speed
-  },
+    pedestrian_speeds = {
+      footway = walking_speed,
+      pedestrian = walking_speed,
+      steps = 2
+    },
 
-  amenity_speeds = {
-    parking = 10,
-    parking_entrance = 10
-  },
+    railway_speeds = {
+      train = 10,
+      railway = 10,
+      subway = 10,
+      light_rail = 10,
+      monorail = 10,
+      tram = 10
+    },
 
-  man_made_speeds = {
-    pier = walking_speed
-  },
+    platform_speeds = {
+      platform = walking_speed
+    },
 
-  route_speeds = {
-    ferry = 5
-  },
+    amenity_speeds = {
+      parking = 10,
+      parking_entrance = 10
+    },
 
-  bridge_speeds = {
-    movable = 5
-  },
+    man_made_speeds = {
+      pier = walking_speed
+    },
 
-  surface_speeds = {
-    asphalt = default_speed,
-    ["cobblestone:flattened"] = 10,
-    paving_stones = 10,
-    compacted = 10,
-    cobblestone = 6,
-    unpaved = 6,
-    fine_gravel = 6,
-    gravel = 6,
-    pebblestone = 6,
-    ground = 6,
-    dirt = 6,
-    earth = 6,
-    grass = 6,
-    mud = 3,
-    sand = 3,
-    sett = 10
-  },
+    route_speeds = {
+      ferry = 5
+    },
 
-  tracktype_speeds = {
-  },
+    bridge_speeds = {
+      movable = 5
+    },
 
-  smoothness_speeds = {
-  },
+    surface_speeds = {
+      asphalt = default_speed,
+      ["cobblestone:flattened"] = 10,
+      paving_stones = 10,
+      compacted = 10,
+      cobblestone = 6,
+      unpaved = 6,
+      fine_gravel = 6,
+      gravel = 6,
+      pebblestone = 6,
+      ground = 6,
+      dirt = 6,
+      earth = 6,
+      grass = 6,
+      mud = 3,
+      sand = 3,
+      sett = 10
+    },
 
-  avoid = Set {
-    'impassable',
-    'construction'
+    tracktype_speeds = {
+    },
+
+    smoothness_speeds = {
+    },
+
+    avoid = Set {
+      'impassable',
+      'construction'
+    }
   }
-}
-
+end
 
 local function parse_maxspeed(source)
     if not source then
@@ -489,7 +487,7 @@ function way_function (way, result)
   limit( result, maxspeed, maxspeed_forward, maxspeed_backward )
 
   -- convert duration into cyclability
-  if properties.weight_name == 'cyclability' then
+  if profile.weight_name == 'cyclability' then
       local is_unsafe = profile.safety_penalty < 1 and profile.unsafe_highway_list[data.highway]
       local is_undesireable = data.highway == "service" and profile.service_penalties[service]
       local penalty = 1.0
@@ -548,11 +546,7 @@ function turn_function(turn)
   if turn.has_traffic_light then
      turn.duration = turn.duration + profile.traffic_light_penalty
   end
-  if properties.weight_name == 'cyclability' then
-      turn.weight = turn.duration
-      -- penalize turns from non-local access only segments onto local access only tags
-      if not turn.source_restricted and turn.target_restricted then
-          turn.weight = turn.weight + 3000
-      end
+  if profile.weight_name == 'cyclability' then
+    turn.weight = turn.duration
   end
 end

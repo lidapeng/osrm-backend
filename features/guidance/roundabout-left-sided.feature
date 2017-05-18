@@ -3,10 +3,11 @@ Feature: Basic Roundabout
 
     Background:
         Given a grid size of 10 meters
-        Given the profile file
+        Given the profile file "car" extended with
            """
-           require 'car'
-            properties.left_hand_driving = true
+           function specialize()
+             profile.left_hand_driving = true
+           end
            """
 
     Scenario: Roundabout exit counting for left sided driving

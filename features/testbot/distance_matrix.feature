@@ -223,9 +223,11 @@ Feature: Basic Distance Matrix
     Scenario: Testbot - Travel time matrix based on segment durations
         Given the profile file "testbot" extended with
         """
-        api_version = 1
-        properties.traffic_signal_penalty = 0
-        properties.u_turn_penalty = 0
+        function specialize()
+          profile.traffic_signal_penalty = 0
+          profile.u_turn_penalty = 0
+        end
+
         function segment_function (segment)
           segment.weight = 2
           segment.duration = 11
@@ -256,10 +258,12 @@ Feature: Basic Distance Matrix
     Scenario: Testbot - Travel time matrix for alternative loop paths
         Given the profile file "testbot" extended with
         """
-        api_version = 1
-        properties.traffic_signal_penalty = 0
-        properties.u_turn_penalty = 0
-        properties.weight_precision = 3
+        function specialize()
+          profile.traffic_signal_penalty = 0
+          profile.u_turn_penalty = 0
+          profile.weight_precision = 3
+        end
+
         function segment_function (segment)
           segment.weight = 777
           segment.duration = 3
