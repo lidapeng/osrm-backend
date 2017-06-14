@@ -224,8 +224,6 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
                                                 "interpolate",
                                                 &SourceContainer::GetRasterInterpolateFromSource);
 
-    context.state.new_enum("constants", "precision", COORDINATE_PRECISION);
-
     context.state.new_usertype<ProfileProperties>(
         "ProfileProperties",
         "traffic_signal_penalty",
@@ -480,9 +478,12 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         BOOST_ASSERT(context.properties.GetUturnPenalty() == 0);
         BOOST_ASSERT(context.properties.GetTrafficSignalPenalty() == 0);
 
-        // set constants in 'constants' table
-        context.state["constants"] = context.state.create_table_with(
-            "max_turn_weight", std::numeric_limits<TurnPenalty>::max());
+        // set constants
+        context.state.new_enum("constants",
+                               "precision",
+                               COORDINATE_PRECISION,
+                               "max_turn_weight",
+                               std::numeric_limits<TurnPenalty>::max());
 
         // read properties from 'profile' table
         sol::optional<std::string> weight_name = context.state["profile"]["weight_name"];
@@ -529,6 +530,9 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         break;
     }
     case 1:
+        // set constants
+        context.state.new_enum("constants", "precision", COORDINATE_PRECISION);
+
         BOOST_ASSERT(context.properties.GetUturnPenalty() == 0);
         BOOST_ASSERT(context.properties.GetTrafficSignalPenalty() == 0);
         context.state["properties"] = &context.properties;
