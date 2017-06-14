@@ -416,9 +416,11 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
     context.state.new_usertype<RasterDatum>(
         "RasterDatum", "datum", &RasterDatum::datum, "invalid_data", &RasterDatum::get_invalid);
 
-    // this global is only used in version 1, but we don't know the version yet,
-    // so we have to set it.
+    // the "properties" global is only used in v1 of the api, but we don't know
+    // the version until we have read the file. so we have to declare it in any case.
+    // we will then clear it for v2 profiles after reading the file
     context.state["properties"] = &context.properties;
+
     context.state["sources"] = &context.sources;
 
     //
@@ -463,6 +465,9 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
     {
     case 2:
     {
+        // clear global not used in v2
+        context.state["properties"] = sol::nullopt;
+
         // call mandatory initialze function
         sol::function intialize_function = context.state["initialize"];
         if (intialize_function.valid())
@@ -535,7 +540,6 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
 
         BOOST_ASSERT(context.properties.GetUturnPenalty() == 0);
         BOOST_ASSERT(context.properties.GetTrafficSignalPenalty() == 0);
-        context.state["properties"] = &context.properties;
         break;
     case 0:
         BOOST_ASSERT(context.properties.GetWeightName() == "duration");
