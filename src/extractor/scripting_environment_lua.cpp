@@ -480,9 +480,6 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         if (specialize_function.valid())
             specialize_function();
 
-        BOOST_ASSERT(context.properties.GetUturnPenalty() == 0);
-        BOOST_ASSERT(context.properties.GetTrafficSignalPenalty() == 0);
-
         // set constants
         context.state.new_enum("constants",
                                "precision",
