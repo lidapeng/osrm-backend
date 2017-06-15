@@ -447,9 +447,9 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
     if (maybe_version)
         context.api_version = *maybe_version;
     else
-        context.api_version = 0;
-
-    util::Log() << "Using profile api version " << context.api_version;
+    {
+        throw util::exception("Profile API version must defined");
+    }
 
     if (context.api_version < SUPPORTED_MIN_API_VERSION ||
         context.api_version > SUPPORTED_MAX_API_VERSION)
@@ -459,6 +459,8 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
                               " to " + std::to_string(SUPPORTED_MAX_API_VERSION) +
                               " are supported." + SOURCE_REF);
     }
+
+    util::Log() << "Using profile api version " << context.api_version;
 
     // version-dependent parts of the api
     switch (context.api_version)
