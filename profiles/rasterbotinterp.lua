@@ -1,17 +1,15 @@
 api_version = 2
 -- Rasterbot profile
 
--- Set to true if you need to call the node_function for every node.
--- Generally can be left as false to avoid unnecessary Lua calls
--- (which slow down pre-processing).
-properties.call_tagless_node_function      = false
-
--- Minimalist node_ and way_functions in order to test source_ and segment_functions
-
 profile = {}
 
 function initialize()
+  profile = {
+    call_tagless_node_function = false
+  }
 end
+
+-- Minimalist node_ and way_functions in order to test source_ and segment_functions
 
 function node_function (node, result)
 end

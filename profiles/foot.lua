@@ -8,12 +8,6 @@ local Sequence = require('lib/sequence')
 local Handlers = require("lib/handlers")
 local next = next       -- bind to local for speed
 
-
--- Set to true if you need to call the node_function for every node.
--- Generally can be left as false to avoid unnecessary Lua calls
--- (which slow down pre-processing).
-properties.call_tagless_node_function      = false
-
 local walking_speed = 5
 
 profile = {}
@@ -24,6 +18,7 @@ function initialize()
     max_speed_for_map_matching    = 40/3.6, -- kmph -> m/s
     use_turn_restrictions         = false,
     continue_straight_at_waypoint = false,
+    call_tagless_node_function    = false,
 
     default_mode            = mode.walking,
     default_speed           = walking_speed,
