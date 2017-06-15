@@ -12,8 +12,8 @@ GraphContractor::GraphContractor(int nodes, std::vector<ContractorEdge> input_ed
 
 GraphContractor::GraphContractor(int nodes,
                                  std::vector<ContractorEdge> edges,
-                                 std::vector<float> &&node_levels_,
-                                 std::vector<EdgeWeight> &&node_weights_)
+                                 std::vector<float> node_levels_,
+                                 std::vector<EdgeWeight> node_weights_)
     : node_levels(std::move(node_levels_)), node_weights(std::move(node_weights_))
 {
     tbb::parallel_sort(edges.begin(), edges.end());
@@ -427,14 +427,14 @@ void GraphContractor::Run(double core_factor)
     thread_data_list.data.clear();
 }
 
-void GraphContractor::GetCoreMarker(std::vector<bool> &out_is_core_node)
+std::vector<bool> GraphContractor::GetCoreMarker()
 {
-    out_is_core_node.swap(is_core_node);
+    return std::move(is_core_node);
 }
 
-void GraphContractor::GetNodeLevels(std::vector<float> &out_node_levels)
+std::vector<float> GraphContractor::GetNodeLevels()
 {
-    out_node_levels.swap(node_levels);
+    return std::move(node_levels);
 }
 
 float GraphContractor::EvaluateNodePriority(ContractorThreadData *const data,

@@ -14,6 +14,29 @@ namespace contractor
 {
 namespace files
 {
+template<typename CoreVectorT>
+// reads .osrm.core
+void readCoreMarker(const boost::filesystem::path &path, CoreVectorT &is_core_node)
+{
+    static_assert(std::is_same<std::vector<bool>, CoreVectorT>::value ||
+                      std::is_same<util::vector_view<bool>, CoreVectorT>::value,
+                  "is_core_node must be a vector");
+    storage::io::FileReader reader(path, storage::io::FileReader::VerifyFingerprint);
+
+    storage::serialization::read(reader, is_core_node);
+}
+
+// writes .osrm.core
+template<typename CoreVectorT>
+void writeCoreMarker(const boost::filesystem::path &path, const CoreVectorT &is_core_node)
+{
+    static_assert(std::is_same<std::vector<bool>, CoreVectorT>::value ||
+                      std::is_same<util::vector_view<bool>, CoreVectorT>::value,
+                  "is_core_node must be a vector");
+    storage::io::FileWriter writer(path, storage::io::FileWriter::GenerateFingerprint);
+
+    storage::serialization::write(writer, is_core_node);
+}
 
 // reads .osrm.hsgr file
 template <typename QueryGraphT>
