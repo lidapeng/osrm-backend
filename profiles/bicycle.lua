@@ -207,12 +207,6 @@ local function parse_maxspeed(source)
     return n
 end
 
-function get_restrictions(vector)
-  for i,v in ipairs(profile.restrictions) do
-    vector:Add(v)
-  end
-end
-
 function node_function (node, result)
   -- parse access and barrier tags
   local highway = node:get_value_by_key("highway")

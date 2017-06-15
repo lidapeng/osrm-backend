@@ -627,36 +627,63 @@ void Sol2ScriptingEnvironment::ProcessElements(
     }
 }
 
-std::vector<std::string> Sol2ScriptingEnvironment::GetNameSuffixList()
+std::vector<std::string>
+Sol2ScriptingEnvironment::GetStringListFromFunction(const std::string &function_name)
 {
     auto &context = GetSol2Context();
     BOOST_ASSERT(context.state.lua_state() != nullptr);
-    std::vector<std::string> suffixes_vector;
-
-    sol::function get_name_suffix_list = context.state["get_name_suffix_list"];
-
-    if (get_name_suffix_list.valid())
+    std::vector<std::string> strings;
+    sol::function function = context.state[function_name];
+    if (function.valid())
     {
-        get_name_suffix_list(suffixes_vector);
+        function(strings);
     }
+    return strings;
+}
 
-    return suffixes_vector;
+std::vector<std::string>
+Sol2ScriptingEnvironment::GetStringListFromTable(const std::string &table_name)
+{
+    auto &context = GetSol2Context();
+    BOOST_ASSERT(context.state.lua_state() != nullptr);
+    std::vector<std::string> strings;
+    sol::table table = context.state["profile"][table_name];
+    if (table.valid())
+    {
+        table.for_each([&](sol::object const &key, sol::object const &value) {
+            strings.push_back(value.as<std::string>());
+            (void)key; // avoid warning about unused parameter
+        });
+    }
+    return strings;
+}
+
+std::vector<std::string> Sol2ScriptingEnvironment::GetNameSuffixList()
+{
+    auto &context = GetSol2Context();
+    switch (context.api_version)
+    {
+    case 2:
+        return Sol2ScriptingEnvironment::GetStringListFromTable("suffix_list");
+    case 1:
+        return Sol2ScriptingEnvironment::GetStringListFromFunction("get_name_suffix_list");
+    default:
+        return {};
+    }
 }
 
 std::vector<std::string> Sol2ScriptingEnvironment::GetRestrictions()
 {
     auto &context = GetSol2Context();
-    BOOST_ASSERT(context.state.lua_state() != nullptr);
-    std::vector<std::string> restrictions;
-
-    sol::function get_restrictions = context.state["get_restrictions"];
-
-    if (get_restrictions.valid())
+    switch (context.api_version)
     {
-        get_restrictions(restrictions);
+    case 2:
+        return Sol2ScriptingEnvironment::GetStringListFromTable("restrictions");
+    case 1:
+        return Sol2ScriptingEnvironment::GetStringListFromFunction("get_restrictions");
+    default:
+        return {};
     }
-
-    return restrictions;
 }
 
 void Sol2ScriptingEnvironment::SetupSources()

@@ -1,5 +1,4 @@
 -- Car profile
-
 api_version = 2
 
 local find_access_tag = require("lib/access").find_access_tag
@@ -262,18 +261,6 @@ function initialize()
       ["none"] = 140
     }
   }
-end
-
-function get_name_suffix_list(vector)
-  for index,suffix in ipairs(profile.suffix_list) do
-      vector:Add(suffix)
-  end
-end
-
-function get_restrictions(vector)
-  for i,v in ipairs(profile.restrictions) do
-    vector:Add(v)
-  end
 end
 
 function node_function (node, result)

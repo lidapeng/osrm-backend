@@ -59,6 +59,8 @@ class Sol2ScriptingEnvironment final : public ScriptingEnvironment
 
     LuaScriptingContext &GetSol2Context();
 
+    std::vector<std::string> GetStringListFromTable(const std::string& table_name);
+    std::vector<std::string> GetStringListFromFunction(const std::string& function_name);
     std::vector<std::string> GetNameSuffixList() override;
     std::vector<std::string> GetRestrictions() override;
     void SetupSources() override;
